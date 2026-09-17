@@ -1,4 +1,5 @@
-Olist E-Commerce Business Performance & Customer Analytics
+## Olist E-Commerce Business Performance & Customer Analytics
+
 
 Project ini merupakan analisis data e-commerce menggunakan PostgreSQL, SQL, Power BI, dan DAX untuk memahami performa penjualan, perilaku pelanggan, performa pengiriman, serta hubungannya dengan customer satisfaction.
 
