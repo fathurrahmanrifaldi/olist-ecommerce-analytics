@@ -4,7 +4,7 @@
 
 ---
 
-## 📌 Gambaran Umum Proyek
+## 📌 Project Overview
 
 Proyek ini menganalisis **Brazilian E-Commerce Public Dataset by Olist**, yang mencakup sekitar **99K orders pada periode 2016–2018**.
 
