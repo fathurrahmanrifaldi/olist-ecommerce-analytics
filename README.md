@@ -69,15 +69,15 @@ Raw Data
 
 ### Executive Overview
 
-![Executive Overview](powerbi/screenshots/executive_overview.png)
+![Executive Overview](images/page1_overall_performance.png)
 
 ### Customer Analytics
 
-![Customer Analytics](powerbi/screenshots/customer_analytics.png)
+![Customer Analytics](images/page2_customer_analysis.png)
 
 ### Delivery & Satisfaction
 
-![Delivery](powerbi/screenshots/delivery_satisfaction.png)
+![Delivery](images/page3_delivery_satisfaction.png)
 
 ---
 
