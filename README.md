@@ -1,17 +1,17 @@
 # Olist E-Commerce Business Performance & Customer Analytics
 
-> **End-to-end Data Analytics Project** analyzing e-commerce business performance, customer behavior, product categories, seller performance, delivery operations, and customer satisfaction using **PostgreSQL, SQL, Power BI, and DAX**.
+> **Proyek Data Analytics End-to-End** yang menganalisis kinerja bisnis e-commerce, perilaku pelanggan, kategori produk, kinerja seller, operasional pengiriman, dan kepuasan pelanggan menggunakan **PostgreSQL, SQL, Power BI, dan DAX**.
 
 ---
 
-## 📌 Project Overview
+## 📌 Gambaran Umum Proyek
 
-This project analyzes the **Brazilian E-Commerce Public Dataset by Olist**, covering approximately **99K orders from 2016–2018**.
+Proyek ini menganalisis **Brazilian E-Commerce Public Dataset by Olist**, yang mencakup sekitar **99K orders pada periode 2016–2018**.
 
-The objective is to transform raw e-commerce data into actionable business insights across several key areas:
+Tujuan proyek ini adalah mengubah data e-commerce mentah menjadi insight bisnis yang dapat ditindaklanjuti pada beberapa area utama:
 
-* 💰 Revenue and order performance
-* 👥 Customer retention and purchase frequency
+* 💰 Revenue dan order performance
+* 👥 Customer retention dan purchase frequency
 * 💎 Customer revenue concentration
 * 🛍️ Product category performance
 * 🏪 Seller performance
@@ -19,22 +19,22 @@ The objective is to transform raw e-commerce data into actionable business insig
 * ⭐ Customer satisfaction
 * 📍 Geographic delivery performance
 
-The project follows an **end-to-end data analytics workflow**, beginning with data validation and cleaning in PostgreSQL, followed by SQL-based business analysis and interactive dashboard development in Power BI.
+Proyek ini mengikuti alur kerja **end-to-end data analytics**, dimulai dari data validation dan cleaning menggunakan PostgreSQL, dilanjutkan dengan business analysis berbasis SQL, kemudian pengembangan dashboard interaktif menggunakan Power BI.
 
 ---
 
-## 🎯 Business Questions
+## 🎯 Pertanyaan Bisnis
 
-The analysis was designed to answer the following business questions:
+Analisis ini dirancang untuk menjawab beberapa pertanyaan bisnis berikut:
 
-1. How does revenue and order performance change over time?
-2. Which product categories contribute the most revenue and order volume?
-3. How significant are repeat customers?
-4. How concentrated is revenue among high-value customers?
-5. Which sellers contribute significantly to revenue and order volume?
-6. How well does the platform perform in terms of delivery?
-7. Is delivery performance associated with customer review scores?
-8. How does delivery performance vary across Brazilian states?
+1. Bagaimana perubahan revenue dan order performance dari waktu ke waktu?
+2. Kategori produk mana yang memberikan kontribusi terbesar terhadap revenue dan order volume?
+3. Seberapa signifikan keberadaan repeat customers?
+4. Seberapa terkonsentrasi revenue pada high-value customers?
+5. Seller mana yang memberikan kontribusi signifikan terhadap revenue dan order volume?
+6. Seberapa baik platform dalam hal delivery performance?
+7. Apakah delivery performance memiliki hubungan dengan customer review scores?
+8. Bagaimana delivery performance berbeda di berbagai negara bagian di Brazil?
 
 ---
 
@@ -42,7 +42,7 @@ The analysis was designed to answer the following business questions:
 
 **Dataset:** Brazilian E-Commerce Public Dataset by Olist
 
-The dataset contains information related to:
+Dataset ini berisi informasi yang berkaitan dengan:
 
 * Customers
 * Orders
@@ -53,76 +53,76 @@ The dataset contains information related to:
 * Reviews
 * Product category translations
 
-The dataset covers approximately **100K orders between 2016 and 2018**.
+Dataset mencakup sekitar **100K orders antara tahun 2016 dan 2018**.
 
 ### Main Tables
 
-| Table                               | Description                            |
-| ----------------------------------- | -------------------------------------- |
-| `customers`                         | Customer information and location      |
-| `orders`                            | Order information and timestamps       |
-| `order_items`                       | Products purchased within each order   |
-| `products`                          | Product information and category       |
-| `sellers`                           | Seller information and location        |
-| `order_payments`                    | Payment information                    |
-| `order_reviews`                     | Customer review scores                 |
-| `product_category_name_translation` | Portuguese-to-English category mapping |
+| Table                               | Description                                  |
+| ----------------------------------- | -------------------------------------------- |
+| `customers`                         | Informasi customer dan lokasi                |
+| `orders`                            | Informasi order dan timestamps               |
+| `order_items`                       | Produk yang dibeli dalam setiap order        |
+| `products`                          | Informasi produk dan kategori                |
+| `sellers`                           | Informasi seller dan lokasi                  |
+| `order_payments`                    | Informasi pembayaran                         |
+| `order_reviews`                     | Customer review scores                       |
+| `product_category_name_translation` | Pemetaan kategori dari Portuguese ke English |
 
 ### Important Data Grain Consideration
 
-`orders` and `order_items` have a **one-to-many relationship**.
+`orders` dan `order_items` memiliki hubungan **one-to-many**.
 
-Therefore, order-level metrics such as:
+Oleh karena itu, metrik pada tingkat order seperti:
 
 * Total Orders
 * Customer Orders
 * Delivery Status
 
-must use **distinct order counting** when joined with `order_items`.
+harus menggunakan **distinct order counting** ketika digabungkan dengan `order_items`.
 
-Example:
+Contoh:
 
 ```sql
 COUNT(DISTINCT order_id)
 ```
 
-This prevents order duplication during analysis.
+Hal ini mencegah terjadinya duplikasi order selama proses analisis.
 
 ---
 
 ## 🧹 Data Preparation & Validation
 
-Data preparation and validation were performed using **PostgreSQL**.
+Data preparation dan validation dilakukan menggunakan **PostgreSQL**.
 
 ### Timestamp Cleaning
 
-Several timestamp fields were originally stored as text values and contained empty strings.
+Beberapa timestamp fields pada awalnya disimpan sebagai text values dan mengandung empty strings.
 
-Empty strings were handled using:
+Empty strings ditangani menggunakan:
 
 ```sql
 NULLIF(column_name, '')::TIMESTAMP
 ```
 
-This preserves missing values as `NULL`, which is important for orders that have not yet been delivered.
+Pendekatan ini mempertahankan missing values sebagai `NULL`, yang penting untuk order yang belum selesai dikirim.
 
 ### Delivery Status
 
-Orders were classified into three delivery statuses:
+Order diklasifikasikan ke dalam tiga delivery statuses:
 
-| Status          | Definition                                         |
-| --------------- | -------------------------------------------------- |
-| `On Time`       | Delivered on or before the estimated delivery date |
-| `Late`          | Delivered after the estimated delivery date        |
-| `Not Delivered` | No delivered customer date available               |
+| Status          | Definition                                          |
+| --------------- | --------------------------------------------------- |
+| `On Time`       | Delivered pada atau sebelum estimated delivery date |
+| `Late`          | Delivered setelah estimated delivery date           |
+| `Not Delivered` | Tidak tersedia delivered customer date              |
 
-An order was considered late when:
+Sebuah order dianggap `Late` ketika:
 
 ```text
 Delivered Date > Estimated Delivery Date
 ```
 
-Orders without a delivered customer date were classified as:
+Order yang tidak memiliki delivered customer date diklasifikasikan sebagai:
 
 ```text
 Not Delivered
@@ -130,9 +130,9 @@ Not Delivered
 
 ### Category Validation
 
-The English product category is not stored directly in the `products` table.
+English product category tidak disimpan secara langsung di dalam tabel `products`.
 
-The category mapping follows:
+Category mapping mengikuti alur:
 
 ```text
 products.product_category_name
@@ -142,17 +142,17 @@ product_category_name_translation.product_category_name
 product_category_name_english
 ```
 
-The translation table was also checked for duplicate category keys.
+Translation table juga diperiksa untuk memastikan tidak terdapat duplicate category keys.
 
-**Result:** No duplicate translation keys were found.
+**Hasil:** Tidak ditemukan duplicate translation keys.
 
-Some products had missing or empty categories, or categories without an English translation. These records were classified as:
+Beberapa produk memiliki category yang kosong, missing, atau tidak memiliki English translation. Record tersebut diklasifikasikan sebagai:
 
 ```text
 Unknown / Untranslated
 ```
 
-Approximately **98.64% of product revenue** could be mapped to translated categories.
+Sekitar **98.64% product revenue** dapat dipetakan ke translated categories.
 
 ---
 
@@ -171,17 +171,17 @@ Approximately **98.64% of product revenue** could be mapped to translated catego
 
 ### Revenue Definition
 
-Product revenue is calculated using:
+Product revenue dihitung menggunakan:
 
 ```text
 order_items.price
 ```
 
-`freight_value` is excluded from the revenue metric.
+`freight_value` tidak termasuk dalam revenue metric.
 
 ### Average Order Value (AOV)
 
-AOV is calculated as:
+AOV dihitung menggunakan formula:
 
 ```text
 Product Revenue
@@ -189,7 +189,7 @@ Product Revenue
 Orders with Items
 ```
 
-Result:
+Hasil:
 
 ```text
 R$137.74
@@ -199,15 +199,15 @@ R$137.74
 
 # 📈 Power BI Dashboard
 
-The Power BI dashboard consists of **three analytical pages**, each designed around a specific business perspective.
+Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing dirancang berdasarkan perspektif bisnis tertentu.
 
 ---
 
 ## 1. Executive Overview
 
-![Executive Overview](images/executive_overview.png)
+[Executive Overview](https://chatgpt.com/c/images/executive_overview.png)
 
-The **Executive Overview** provides a high-level view of overall business performance.
+**Executive Overview** memberikan gambaran tingkat tinggi mengenai keseluruhan business performance.
 
 ### KPIs
 
@@ -225,15 +225,15 @@ The **Executive Overview** provides a high-level view of overall business perfor
 
 ### Business Question
 
-> **How is the business performing?**
+> **Bagaimana performa bisnis secara keseluruhan?**
 
 ---
 
 ## 2. Customer Analytics
 
-![Customer Analytics](images/customer_analytics.png)
+[Customer Analytics](https://chatgpt.com/c/images/customer_analytics.png)
 
-The **Customer Analytics** page focuses on customer behavior and revenue contribution.
+Halaman **Customer Analytics** berfokus pada customer behavior dan revenue contribution.
 
 ### KPIs
 
@@ -251,15 +251,15 @@ The **Customer Analytics** page focuses on customer behavior and revenue contrib
 
 ### Business Question
 
-> **Who are the customers and how do they purchase?**
+> **Siapa customer perusahaan dan bagaimana pola pembelian mereka?**
 
 ---
 
 ## 3. Delivery & Satisfaction
 
-![Delivery & Satisfaction](images/delivery_satisfaction.png)
+[Delivery & Satisfaction](https://chatgpt.com/c/images/delivery_satisfaction.png)
 
-The **Delivery & Satisfaction** page analyzes logistics performance and customer experience.
+Halaman **Delivery & Satisfaction** menganalisis logistics performance dan customer experience.
 
 ### KPIs
 
@@ -277,63 +277,63 @@ The **Delivery & Satisfaction** page analyzes logistics performance and customer
 
 ### Business Question
 
-> **How does delivery performance relate to customer satisfaction?**
+> **Bagaimana delivery performance berkaitan dengan customer satisfaction?**
 
 ---
 
 # 🔎 Key Findings
 
-## 1. Revenue Grew Strongly During 2017
+## 1. Revenue Mengalami Pertumbuhan yang Kuat Selama 2017
 
-Monthly revenue increased substantially throughout 2017.
+Monthly revenue mengalami peningkatan yang cukup besar sepanjang tahun 2017.
 
-**November 2017** recorded approximately:
+**November 2017** mencatat sekitar:
 
 > ### R$1.01M
 
-with:
+dengan:
 
 * **7,451 orders**
-* Approximately **52.10% month-over-month revenue growth** compared with October 2017
+* Sekitar **52.10% month-over-month revenue growth** dibandingkan Oktober 2017
 
-Revenue then fluctuated during 2018 while remaining at a relatively high level through August.
+Revenue kemudian mengalami fluktuasi selama 2018, tetapi tetap berada pada level yang relatif tinggi hingga Agustus.
 
 ---
 
-## 2. Repeat Customers Represent a Small Portion of the Customer Base
+## 2. Repeat Customers Merupakan Sebagian Kecil dari Customer Base
 
-Only:
+Hanya:
 
 > ### 3.12%
 
-of unique customers were classified as repeat customers.
+dari unique customers yang diklasifikasikan sebagai repeat customers.
 
-However, repeat customers generated higher revenue per customer:
+Namun, repeat customers menghasilkan revenue per customer yang lebih tinggi:
 
 | Customer Type | Customers | Revenue / Customer |
 | ------------- | --------: | -----------------: |
 | One-Time      |    93,099 |           R$137.66 |
 | Repeat        |     2,997 |           R$259.87 |
 
-This indicates that **customer purchase frequency is an important dimension for further customer analysis**.
+Hal ini menunjukkan bahwa **customer purchase frequency merupakan salah satu dimensi penting untuk analisis customer lebih lanjut**.
 
 ---
 
-## 3. Revenue Is Concentrated Among High-Value Customers
+## 3. Revenue Terkonsentrasi pada High-Value Customers
 
-The top **10% of customers**, ranked by product revenue, contributed:
+Top **10% of customers**, berdasarkan product revenue, memberikan kontribusi:
 
 > ### 41.23% of Total Product Revenue
 
-This indicates that revenue contribution is not evenly distributed across the customer base.
+Hal ini menunjukkan bahwa kontribusi revenue tidak tersebar secara merata di seluruh customer base.
 
-**Important:** This analysis measures revenue contribution and should not be interpreted as a direct measure of customer loyalty.
+**Important:** Analisis ini mengukur revenue contribution dan tidak boleh diinterpretasikan secara langsung sebagai ukuran customer loyalty.
 
 ---
 
-## 4. Category Performance Differs Between Order Volume and Revenue
+## 4. Category Performance Berbeda antara Order Volume dan Revenue
 
-Order volume does not necessarily correspond directly to revenue contribution.
+Order volume tidak selalu secara langsung mencerminkan revenue contribution.
 
 | Category                | Orders |  Revenue |
 | ----------------------- | -----: | -------: |
@@ -343,15 +343,15 @@ Order volume does not necessarily correspond directly to revenue contribution.
 | `sports_leisure`        |  7,720 |   R$988K |
 | `computers_accessories` |  6,689 |   R$912K |
 
-For example, `bed_bath_table` generated more orders than `health_beauty`, while `health_beauty` generated higher product revenue.
+Sebagai contoh, `bed_bath_table` menghasilkan order yang lebih banyak dibandingkan `health_beauty`, sedangkan `health_beauty` menghasilkan product revenue yang lebih tinggi.
 
-This demonstrates why category performance should be evaluated using **both transaction volume and monetary contribution**.
+Hal ini menunjukkan bahwa category performance sebaiknya dievaluasi menggunakan **transaction volume dan monetary contribution secara bersamaan**.
 
 ---
 
-## 5. Late Delivery Rate Was 8.11% Among Delivered Orders
+## 5. Late Delivery Rate Sebesar 8.11% di antara Delivered Orders
 
-Overall delivery performance:
+Secara keseluruhan, delivery performance adalah:
 
 | Status        | Orders |  Share |
 | ------------- | -----: | -----: |
@@ -359,36 +359,36 @@ Overall delivery performance:
 | Late          |  7,827 |  7.87% |
 | Not Delivered |  2,965 |  2.98% |
 
-The late delivery rate among **delivered orders** was:
+Late delivery rate di antara **delivered orders** adalah:
 
 > ### 8.11%
 
-`Not Delivered` orders were excluded from the denominator when calculating the late delivery rate.
+Order dengan status `Not Delivered` tidak dimasukkan ke dalam denominator ketika menghitung late delivery rate.
 
 ---
 
-## 6. Late Deliveries Were Associated With Lower Review Scores
+## 6. Late Deliveries Berkaitan dengan Review Scores yang Lebih Rendah
 
-Average review scores differed between late and on-time deliveries:
+Average review scores berbeda antara late dan on-time deliveries:
 
 | Delivery Status | Reviewed Orders | Average Review |
 | --------------- | --------------: | -------------: |
 | Late            |           5,395 |           2.57 |
 | On Time         |          62,371 |           4.29 |
 
-The difference was:
+Perbedaannya adalah:
 
 > ### 1.72 Review Points
 
-This indicates an **association between delivery status and customer review scores** in the observed data.
+Hal ini menunjukkan adanya **association antara delivery status dan customer review scores** pada data yang diamati.
 
-> ⚠️ **Important:** This analysis does **not establish causality**. The observed relationship does not prove that late delivery directly caused lower review scores.
+> ⚠️ **Important:** Analisis ini **tidak membuktikan hubungan kausalitas**. Hubungan yang diamati tidak membuktikan bahwa late delivery secara langsung menyebabkan review scores yang lebih rendah.
 
 ---
 
-## 7. Delivery Performance Varies Across States
+## 7. Delivery Performance Berbeda di Berbagai States
 
-Late delivery rates varied considerably across Brazilian states.
+Late delivery rates menunjukkan variasi yang cukup besar di berbagai Brazilian states.
 
 | State | Delivered Orders | Late Orders | Late Rate |
 | ----- | ---------------: | ----------: | --------: |
@@ -399,28 +399,28 @@ Late delivery rates varied considerably across Brazilian states.
 | MG    |           11,355 |         638 |     5.62% |
 | PR    |            4,923 |         246 |     5.00% |
 
-Both **delivery rate and order volume** should be considered when interpreting geographic delivery performance.
+Baik **delivery rate maupun order volume** perlu dipertimbangkan ketika menginterpretasikan geographic delivery performance.
 
 ---
 
 # 💡 Potential Business Actions
 
-The observed patterns suggest several areas that could be investigated further.
+Pola yang ditemukan menunjukkan beberapa area yang dapat dianalisis lebih lanjut.
 
 ### 1. Customer Retention
 
-Further segment customers based on:
+Customer dapat disegmentasikan lebih lanjut berdasarkan:
 
 * Purchase frequency
 * Revenue
 * Recency
 * Category preference
 
-This can support more targeted retention and engagement analysis.
+Hal ini dapat mendukung analisis retention dan engagement yang lebih targeted.
 
 ### 2. High-Value Customer Analysis
 
-Monitor high-revenue customers using:
+High-revenue customers dapat dimonitor berdasarkan:
 
 * Revenue contribution
 * Purchase frequency
@@ -429,7 +429,7 @@ Monitor high-revenue customers using:
 
 ### 3. Category Strategy
 
-Evaluate categories using multiple dimensions:
+Kategori dapat dievaluasi menggunakan beberapa dimensi:
 
 * Order volume
 * Revenue
@@ -438,7 +438,7 @@ Evaluate categories using multiple dimensions:
 
 ### 4. Delivery Performance
 
-Investigate late delivery patterns by:
+Late delivery patterns dapat dianalisis lebih lanjut berdasarkan:
 
 * State
 * Seller
@@ -447,27 +447,27 @@ Investigate late delivery patterns by:
 
 ### 5. Customer Experience
 
-Combine delivery KPIs with review metrics to monitor potential relationships between **logistics performance and customer satisfaction**.
+Delivery KPIs dapat dikombinasikan dengan review metrics untuk memonitor potential relationships antara **logistics performance dan customer satisfaction**.
 
 ---
 
 # ⚠️ Limitations
 
-Several limitations should be considered when interpreting this analysis.
+Beberapa keterbatasan perlu dipertimbangkan ketika menginterpretasikan hasil analisis.
 
 ### Historical Dataset
 
-The dataset covers approximately **2016–2018** and therefore does not represent current e-commerce performance.
+Dataset mencakup periode sekitar **2016–2018**, sehingga tidak merepresentasikan kondisi e-commerce saat ini.
 
 ### Revenue Definition
 
-Revenue is calculated using:
+Revenue dihitung menggunakan:
 
 ```text
 order_items.price
 ```
 
-and excludes:
+dan tidak mencakup:
 
 ```text
 freight_value
@@ -475,26 +475,26 @@ freight_value
 
 ### No Cost Data
 
-The dataset does not provide sufficient cost information to calculate:
+Dataset tidak menyediakan informasi biaya yang memadai untuk menghitung:
 
 * Profit
 * Profit margin
 
-Therefore, high-revenue categories or sellers should **not automatically be interpreted as the most profitable**.
+Oleh karena itu, kategori atau seller dengan revenue tinggi **tidak dapat secara otomatis diinterpretasikan sebagai kategori atau seller yang paling profitable**.
 
 ### Review Data
 
-Review analysis only includes orders with available reviews.
+Review analysis hanya mencakup order yang memiliki available reviews.
 
-Therefore, review results may not represent every order.
+Oleh karena itu, hasil analisis review mungkin tidak merepresentasikan seluruh order.
 
 ### Correlation vs. Causation
 
-The relationship between delivery status and review score should be interpreted as an **association**, rather than proof that late delivery directly caused lower reviews.
+Hubungan antara delivery status dan review score harus diinterpretasikan sebagai **association**, bukan sebagai bukti bahwa late delivery secara langsung menyebabkan review yang lebih rendah.
 
 ### Category Mapping
 
-A small portion of product revenue could not be mapped to an English product category and was classified as:
+Sebagian kecil product revenue tidak dapat dipetakan ke English product category dan diklasifikasikan sebagai:
 
 ```text
 Unknown / Untranslated
@@ -506,11 +506,11 @@ Unknown / Untranslated
 
 | Technology       | Purpose                                              |
 | ---------------- | ---------------------------------------------------- |
-| **PostgreSQL**   | Data storage, cleaning, validation, and SQL analysis |
-| **SQL**          | Business analysis and data transformation            |
-| **Power BI**     | Interactive dashboard and data visualization         |
-| **DAX**          | Business metrics and calculated measures             |
-| **Git & GitHub** | Version control and project documentation            |
+| **PostgreSQL**   | Data storage, cleaning, validation, dan SQL analysis |
+| **SQL**          | Business analysis dan data transformation            |
+| **Power BI**     | Interactive dashboard dan data visualization         |
+| **DAX**          | Business metrics dan calculated measures             |
+| **Git & GitHub** | Version control dan project documentation            |
 
 ---
 
@@ -543,7 +543,7 @@ olist-ecommerce-business-analytics/
 
 # 🚀 Future Improvements
 
-Potential extensions for this project include:
+Pengembangan lebih lanjut yang dapat dilakukan pada proyek ini meliputi:
 
 * Customer RFM segmentation
 * Customer cohort analysis
@@ -575,6 +575,6 @@ Interested in:
 
 ## 📌 Disclaimer
 
-This project is intended for **educational and portfolio purposes**.
+Proyek ini dibuat untuk **educational dan portfolio purposes**.
 
-The business recommendations represent potential areas for further investigation based on the available dataset and should not be interpreted as confirmed causal conclusions.
+Business recommendations yang disampaikan merupakan potential areas untuk investigasi lebih lanjut berdasarkan dataset yang tersedia dan tidak boleh diinterpretasikan sebagai confirmed causal conclusions.
