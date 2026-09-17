@@ -5,8 +5,6 @@ Project ini merupakan analisis data e-commerce menggunakan PostgreSQL, SQL, Powe
 
 Analisis menggunakan Brazilian E-Commerce Public Dataset by Olist, yang berisi data transaksi e-commerce pada periode 2016–2018.
 
-Project ini dibuat sebagai portfolio project untuk posisi Data Analyst Internship/PKL, dengan pendekatan yang berfokus pada business questions, data validation, exploratory analysis, KPI, data visualization, dan business insights.
-
 ## 🎯 Business Questions
 
 Analisis ini berfokus pada beberapa pertanyaan bisnis:
@@ -60,6 +58,7 @@ Proses analisis dilakukan melalui beberapa tahap:
 
 ### 1. Customer Retention
 
+[ Overall Performancec ] 
 Dari 96.096 unique customers:
 
 - 93.099 customer (96,88%) hanya melakukan satu kali pembelian.
