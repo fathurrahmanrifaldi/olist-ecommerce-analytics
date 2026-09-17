@@ -107,4 +107,3 @@ Pada order yang memiliki review:
 
 Terdapat perbedaan rata-rata review sebesar **1,72 poin** antara order
 late dan on-time.
-
