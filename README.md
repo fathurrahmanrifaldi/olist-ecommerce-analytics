@@ -1,139 +1,110 @@
-# Olist E-Commerce Sales & Customer Analytics
+Olist E-Commerce Business Performance & Customer Analytics
 
-## 📌 Overview
+Project ini merupakan analisis data e-commerce menggunakan PostgreSQL, SQL, Power BI, dan DAX untuk memahami performa penjualan, perilaku pelanggan, performa pengiriman, serta hubungannya dengan customer satisfaction.
 
-This project analyzes the Brazilian E-Commerce Public Dataset
-by Olist to evaluate sales performance, customer behavior,
-delivery performance, and customer satisfaction.
+Analisis menggunakan Brazilian E-Commerce Public Dataset by Olist, yang berisi data transaksi e-commerce pada periode 2016–2018.
 
-The project simulates a Data Analyst Intern assignment
-in an e-commerce company.
+Project ini dibuat sebagai portfolio project untuk posisi Data Analyst Internship/PKL, dengan pendekatan yang berfokus pada business questions, data validation, exploratory analysis, KPI, data visualization, dan business insights.
 
----
+## 🎯 Business Questions
 
-## 🎯 Business Objective
+Analisis ini berfokus pada beberapa pertanyaan bisnis:
 
-The objective is to transform transactional data into
-actionable business insights that can support decisions
-related to sales, customer retention, and delivery performance.
+1. Bagaimana perkembangan revenue dan jumlah order dari waktu ke waktu?
+2. Kategori produk apa yang memiliki kontribusi revenue dan order terbesar?
+3. Bagaimana karakteristik customer berdasarkan frekuensi pembelian?
+4. Seberapa besar kontribusi repeat customer terhadap revenue?
+5. Bagaimana performa pengiriman berdasarkan status keterlambatan?
+6. Apakah terdapat hubungan antara keterlambatan pengiriman dengan customer review?
+7. Bagaimana variasi performa delivery antar-state di Brazil?
 
----
+## 🔄 Data Analysis Workflow
 
-## ❓ Business Questions
+Proses analisis dilakukan melalui beberapa tahap:
 
-1. How is sales performance changing over time?
-2. Which product categories generate the most revenue?
-3. How strong is customer retention?
-4. Which sellers or regions have delivery issues?
-5. Is delivery delay associated with customer satisfaction?
+1. **Data Understanding**
+   - Memahami struktur dan relasi antar tabel.
+   - Mengidentifikasi grain pada setiap tabel.
+   - Menentukan metrik dan business questions.
 
----
+2. **Data Validation & Cleaning**
+   - Memeriksa duplicate records.
+   - Memeriksa missing values.
+   - Membersihkan timestamp.
+   - Memvalidasi relasi antar tabel.
+   - Memastikan tidak terjadi double counting pada revenue dan orders.
 
-## 🗂️ Dataset
+3. **SQL Analysis**
+   - Menggunakan PostgreSQL untuk melakukan data transformation dan business analysis.
+   - Menggunakan aggregation, CTE, window functions, JOIN, dan conditional logic.
 
-Brazilian E-Commerce Public Dataset by Olist
+4. **Exploratory Data Analysis**
+   - Menganalisis sales trend.
+   - Customer behavior.
+   - Category performance.
+   - Delivery performance.
+   - Review distribution.
 
-Source:
-https://www.kaggle.com/olistbr/brazilian-ecommerce
+5. **Power BI & DAX**
+   - Membuat KPI.
+   - Membuat interactive dashboard.
+   - Membuat calculated measures menggunakan DAX.
 
-The dataset contains approximately 100,000 orders
-from 2016–2018.
+6. **Business Insights**
+   - Menginterpretasikan hasil analisis.
+   - Mengidentifikasi pola yang relevan dengan bisnis.
+   - Menyusun potential business actions.
 
----
+   ## 🔍 Key Findings
 
-## 🛠️ Tools
+### 1. Customer Retention
 
-- PostgreSQL
-- SQL
-- Power BI
-- DAX
-- Git/GitHub
+Dari 96.096 unique customers:
 
----
+- 93.099 customer (96,88%) hanya melakukan satu kali pembelian.
+- 2.997 customer (3,12%) melakukan repeat purchase.
+- Repeat customer menghasilkan rata-rata revenue per customer sekitar
+  R$259,87, dibandingkan R$137,66 pada one-time customer.
 
-## 🔄 Analytical Workflow
-
-Raw Data
-→ Data Quality Check
-→ SQL Cleaning
-→ SQL Analysis
-→ Data Modeling
-→ DAX
-→ Power BI Dashboard
-→ Business Insights
-→ Recommendations
-
----
-
-## 📊 Dashboard
-
-### Executive Overview
-
-![Executive Overview](images/page1_overall_performance.png)
-
-### Customer Analytics
-
-![Customer Analytics](images/page2_customer_analysis.png)
-
-### Delivery & Satisfaction
-
-![Delivery](images/page3_delivery_satisfaction.png)
+Temuan ini menunjukkan adanya perbedaan revenue contribution antara
+customer yang melakukan repeat purchase dan customer yang hanya
+melakukan satu transaksi.
 
 ---
 
-## 📈 KPIs
+### 2. Customer Revenue Concentration
 
-- Total Revenue
-- Total Orders
-- Total Customers
-- Average Order Value
-- Repeat Customer Rate
-- Late Delivery Rate
-- Average Review Score
+10% customer dengan revenue tertinggi berkontribusi sekitar **41,23%**
+terhadap total product revenue.
+
+Hal ini menunjukkan bahwa revenue tidak tersebar secara merata di
+seluruh customer base.
 
 ---
 
-## 🔎 Key Insights
+### 3. Delivery Performance
 
-### Sales Performance
+Dari order yang telah delivered:
 
-[Insert validated finding]
+- On Time: 89,15%
+- Late: 7,87%
+- Late Delivery Rate: 8,11%
 
-### Customer Behavior
-
-[Insert validated finding]
-
-### Delivery Performance
-
-[Insert validated finding]
-
-### Customer Satisfaction
-
-[Insert validated finding]
+Late Delivery Rate dihitung hanya berdasarkan order yang sudah delivered,
+sehingga order dengan status `Not Delivered` tidak dikategorikan sebagai
+late delivery.
 
 ---
 
-## 💡 Business Recommendations
+### 4. Delivery & Customer Satisfaction
 
-### 1. Delivery Improvement
+Pada order yang memiliki review:
 
-[Insert recommendation]
+| Delivery Status | Average Review |
+|---|---:|
+| On Time | 4,29 |
+| Late | 2,57 |
 
-### 2. Customer Retention
+Terdapat perbedaan rata-rata review sebesar **1,72 poin** antara order
+late dan on-time.
 
-[Insert recommendation]
-
-### 3. Product Strategy
-
-[Insert recommendation]
-
----
-
-## 📁 Repository Structure
-
-```text
-sql/
-powerbi/
-docs/
-data/
-README.md
