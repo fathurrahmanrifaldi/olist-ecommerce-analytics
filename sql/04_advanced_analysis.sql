@@ -107,6 +107,7 @@ SELECT
 FROM category_revenue
 ORDER BY revenue DESC;
 
+
 -- 04. Customer Type
 WITH customer_orders AS (
     SELECT
@@ -136,6 +137,7 @@ SELECT
 FROM customer_orders
 GROUP BY 1
 ORDER BY customers DESC;
+
 
 -- 05. Customer Revenue Contribution
 WITH customer_summary AS (
@@ -227,6 +229,7 @@ GROUP BY delivery_status
 
 ORDER BY total_orders DESC;
 
+
 -- 06B. Late Delivery Rate
 SELECT
     COUNT(*) FILTER (
@@ -276,6 +279,7 @@ WHERE o.delivery_status IN ('Late', 'On Time')
 GROUP BY o.delivery_status
 
 ORDER BY average_review_score DESC;
+
 
 -- 07B. Review Score Difference
 WITH delivery_review AS (
@@ -363,6 +367,7 @@ GROUP BY c.customer_state
 
 ORDER BY late_delivery_rate_percent DESC;
 
+
 -- 09. Cari "High Volume + High Late Rate"
 WITH state_delivery AS (
     SELECT
@@ -435,6 +440,7 @@ GROUP BY 1
 
 ORDER BY revenue DESC;
 
+
 -- 11. Customer Revenue per Customer Type
 WITH customer_revenue AS (
     SELECT
@@ -478,6 +484,7 @@ FROM customer_revenue
 
 GROUP BY 1;
 
+
 -- 12. Top Revenue Category
 SELECT
     COALESCE(
@@ -507,6 +514,7 @@ ORDER BY revenue DESC
 
 LIMIT 5;
 
+
 -- 13. Top 5 States by Revenue
 SELECT
     c.customer_state AS state,
@@ -530,6 +538,7 @@ GROUP BY c.customer_state
 ORDER BY revenue DESC
 
 LIMIT 5;
+
 
 -- 14. Revenue Growth Month-over-Month
 WITH monthly_revenue AS (
@@ -582,3 +591,300 @@ SELECT
 FROM monthly_growth
 
 ORDER BY month;
+
+
+-- 4.1 Revenue vs Order Volume by Product Category
+
+WITH category_performance AS (
+    SELECT
+        pct.product_category_name_english AS category,
+        COUNT(DISTINCT oi.order_id) AS total_orders,
+        SUM(oi.price) AS total_revenue
+    FROM order_items oi
+    JOIN products p
+        ON oi.product_id = p.product_id
+    JOIN product_category_name_translation pct
+        ON p.product_category_name = pct.product_category_name
+    GROUP BY pct.product_category_name_english
+)
+
+SELECT
+    category,
+    total_orders,
+    ROUND(total_revenue::NUMERIC, 2) AS total_revenue,
+    ROUND(
+        total_revenue::NUMERIC / NULLIF(total_orders, 0),
+        2
+    ) AS revenue_per_order
+FROM category_performance
+ORDER BY total_revenue DESC;
+
+-- 4.2 Top Sellers by Revenue
+
+SELECT
+    oi.seller_id,
+    COUNT(DISTINCT oi.order_id) AS total_orders,
+    COUNT(*) AS total_items,
+    ROUND(SUM(oi.price)::NUMERIC, 2) AS total_revenue
+FROM order_items oi
+GROUP BY oi.seller_id
+ORDER BY total_revenue DESC
+LIMIT 20;
+
+-- 4.3 Customer Revenue Contribution
+WITH customer_revenue AS (
+    SELECT
+        c.customer_unique_id,
+        SUM(oi.price) AS total_revenue
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id = o.customer_id
+    JOIN order_items oi
+        ON o.order_id = oi.order_id
+    GROUP BY c.customer_unique_id
+)
+
+SELECT
+    COUNT(*) AS total_customers,
+    ROUND(SUM(total_revenue)::NUMERIC, 2) AS total_revenue,
+    ROUND(AVG(total_revenue)::NUMERIC, 2) AS avg_revenue_per_customer,
+    ROUND(MAX(total_revenue)::NUMERIC, 2) AS highest_customer_revenue
+FROM customer_revenue;
+
+-- 4.4 Monthly Revenue Growth
+WITH monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', o.order_purchase_timestamp) AS month,
+        SUM(oi.price) AS revenue
+    FROM orders o
+    JOIN order_items oi
+        ON o.order_id = oi.order_id
+    GROUP BY DATE_TRUNC('month', o.order_purchase_timestamp)
+)
+
+SELECT
+    month,
+    ROUND(revenue::NUMERIC, 2) AS revenue,
+    ROUND(
+        (
+            revenue -
+            LAG(revenue) OVER (ORDER BY month)
+        )::NUMERIC
+        * 100.0
+        /
+        NULLIF(
+            LAG(revenue) OVER (ORDER BY month),
+            0
+        )::NUMERIC,
+        2
+    ) AS mom_growth_percentage
+FROM monthly_revenue
+ORDER BY month;
+
+-- 4.4 Perbaikan MoM
+WITH monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', o.order_purchase_timestamp) AS month,
+        COUNT(DISTINCT o.order_id) AS total_orders,
+        SUM(oi.price) AS revenue
+    FROM orders o
+    JOIN order_items oi
+        ON o.order_id = oi.order_id
+    GROUP BY DATE_TRUNC('month', o.order_purchase_timestamp)
+)
+
+SELECT
+    month,
+    total_orders,
+    ROUND(revenue::NUMERIC, 2) AS revenue,
+    ROUND(
+        (
+            revenue::NUMERIC -
+            LAG(revenue::NUMERIC) OVER (ORDER BY month)
+        ) * 100.0 /
+        NULLIF(
+            LAG(revenue::NUMERIC) OVER (ORDER BY month),
+            0
+        ),
+        2
+    ) AS mom_growth_percentage
+FROM monthly_revenue
+WHERE month >= '2017-01-01'
+  AND month < '2018-09-01'
+ORDER BY month;
+
+-- 5.1 Customer Concentration
+
+WITH customer_revenue AS (
+    SELECT
+        c.customer_unique_id,
+        SUM(oi.price) AS total_revenue
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id = o.customer_id
+    JOIN order_items oi
+        ON o.order_id = oi.order_id
+    GROUP BY c.customer_unique_id
+),
+
+customer_deciles AS (
+    SELECT
+        customer_unique_id,
+        total_revenue,
+        NTILE(10) OVER (
+            ORDER BY total_revenue DESC
+        ) AS revenue_decile
+    FROM customer_revenue
+)
+
+SELECT
+    revenue_decile,
+    COUNT(*) AS total_customers,
+    ROUND(SUM(total_revenue::NUMERIC), 2) AS total_revenue,
+    ROUND(
+        SUM(total_revenue::NUMERIC) * 100.0 /
+        SUM(SUM(total_revenue::NUMERIC)) OVER (),
+        2
+    ) AS revenue_share
+FROM customer_deciles
+GROUP BY revenue_decile
+ORDER BY revenue_decile;
+
+-- 5.2 Revenue Contribution
+
+WITH category_performance AS (
+    SELECT
+        pct.product_category_name_english AS category,
+        COUNT(DISTINCT oi.order_id) AS total_orders,
+        SUM(oi.price) AS total_revenue
+    FROM order_items oi
+    JOIN products p
+        ON oi.product_id = p.product_id
+    JOIN product_category_name_translation pct
+    	ON p.product_category_name = pct.product_category_name_english 
+    GROUP BY pct.product_category_name_english
+)
+
+SELECT
+    category,
+    total_orders,
+    ROUND(total_revenue::NUMERIC, 2) AS total_revenue,
+    ROUND(
+        total_revenue::NUMERIC * 100.0 /
+        SUM(total_revenue::NUMERIC) OVER (),
+        2
+    ) AS revenue_share
+FROM category_performance
+ORDER BY total_revenue DESC;
+
+
+-- 5.2 Validasi 5.2
+WITH category_performance AS (
+    SELECT
+        pct.product_category_name_english AS category,
+        COUNT(DISTINCT oi.order_id) AS total_orders,
+        SUM(oi.price) AS total_revenue
+    FROM order_items oi
+    JOIN products p
+        ON oi.product_id = p.product_id
+    JOIN product_category_name_translation pct
+        ON p.product_category_name = pct.product_category_name
+    GROUP BY pct.product_category_name_english
+)
+
+SELECT
+    category,
+    total_orders,
+    ROUND(
+        total_revenue::NUMERIC,
+        2
+    ) AS total_revenue,
+    ROUND(
+        (
+            total_revenue::NUMERIC * 100.0
+        ) /
+        NULLIF(
+            SUM(total_revenue::NUMERIC) OVER (),
+            0
+        ),
+        2
+    ) AS revenue_share
+FROM category_performance
+ORDER BY total_revenue DESC;
+
+
+-- Validasi Category name
+
+SELECT
+    p.product_category_name,
+    COUNT(*) AS total_products
+FROM products p
+LEFT JOIN product_category_name_translation pct
+    ON p.product_category_name = pct.product_category_name
+WHERE p.product_category_name IS NOT NULL
+  AND pct.product_category_name IS NULL
+GROUP BY p.product_category_name
+ORDER BY total_products DESC;
+
+-- a3
+SELECT
+    COUNT(*) AS total_products,
+    COUNT(*) FILTER (
+        WHERE p.product_category_name IS NOT NULL
+    ) AS products_with_category,
+    COUNT(*) FILTER (
+        WHERE pct.product_category_name IS NOT NULL
+    ) AS products_with_translation
+FROM products p
+LEFT JOIN product_category_name_translation pct
+    ON p.product_category_name = pct.product_category_name;
+
+-- 1
+SELECT
+    COUNT(DISTINCT oi.order_id) AS total_orders,
+    COUNT(*) AS total_items,
+    ROUND(
+        SUM(oi.price)::NUMERIC,
+        2
+    ) AS total_revenue
+FROM order_items oi
+JOIN products p
+    ON oi.product_id = p.product_id
+LEFT JOIN product_category_name_translation pct
+    ON p.product_category_name = pct.product_category_name
+WHERE pct.product_category_name IS NULL;
+
+-- 2
+SELECT
+    CASE
+        WHEN p.product_category_name IS NULL
+            THEN 'NULL category'
+        WHEN TRIM(p.product_category_name) = ''
+            THEN 'Empty category'
+        WHEN pct.product_category_name IS NULL
+            THEN 'No translation'
+        ELSE 'Translated'
+    END AS category_mapping_status,
+
+    COUNT(*) AS total_items,
+    COUNT(DISTINCT oi.order_id) AS total_orders,
+    ROUND(
+        SUM(oi.price)::NUMERIC,
+        2
+    ) AS total_revenue
+FROM order_items oi
+JOIN products p
+    ON oi.product_id = p.product_id
+LEFT JOIN product_category_name_translation pct
+    ON p.product_category_name = pct.product_category_name
+GROUP BY
+    CASE
+        WHEN p.product_category_name IS NULL
+            THEN 'NULL category'
+        WHEN TRIM(p.product_category_name) = ''
+            THEN 'Empty category'
+        WHEN pct.product_category_name IS NULL
+            THEN 'No translation'
+        ELSE 'Translated'
+    END
+ORDER BY total_revenue DESC;

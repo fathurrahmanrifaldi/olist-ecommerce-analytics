@@ -114,18 +114,11 @@ Order diklasifikasikan ke dalam tiga delivery statuses:
 | --------------- | --------------------------------------------------- |
 | `On Time`       | Delivered pada atau sebelum estimated delivery date |
 | `Late`          | Delivered setelah estimated delivery date           |
-| `Not Delivered` | Tidak tersedia delivered customer date              |
 
 Sebuah order dianggap `Late` ketika:
 
 ```text
 Delivered Date > Estimated Delivery Date
-```
-
-Order yang tidak memiliki delivered customer date diklasifikasikan sebagai:
-
-```text
-Not Delivered
 ```
 
 ### Category Validation
@@ -221,7 +214,6 @@ Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing di
 * Monthly Revenue Trend
 * Revenue by Product Category
 * Revenue by State
-* Category / Seller Performance
 
 ### Business Question
 
@@ -239,15 +231,13 @@ Halaman **Customer Analytics** berfokus pada customer behavior dan revenue contr
 
 * Total Customers
 * Repeat Customers
-* Repeat Customer Rate
-* Revenue from Repeat Customers
+* One Time Customer
 
 ### Visualizations
 
 * One-Time vs Repeat Customers
 * Customer Order Frequency
 * Revenue by Customer Type
-* Customer Revenue Contribution
 
 ### Business Question
 
@@ -263,9 +253,8 @@ Halaman **Delivery & Satisfaction** menganalisis logistics performance dan custo
 
 ### KPIs
 
+* Total Delivered
 * Late Delivery Rate
-* On-Time Delivery Rate
-* Not Delivered Orders
 * Average Review Score
 
 ### Visualizations
@@ -273,7 +262,6 @@ Halaman **Delivery & Satisfaction** menganalisis logistics performance dan custo
 * Review Score by Delivery Status
 * Review Score Distribution
 * Late Delivery Rate by State
-* Delivery Performance Details
 
 ### Business Question
 
@@ -357,13 +345,10 @@ Secara keseluruhan, delivery performance adalah:
 | ------------- | -----: | -----: |
 | On Time       | 88,649 | 89.15% |
 | Late          |  7,827 |  7.87% |
-| Not Delivered |  2,965 |  2.98% |
 
 Late delivery rate di antara **delivered orders** adalah:
 
 > ### 8.11%
-
-Order dengan status `Not Delivered` tidak dimasukkan ke dalam denominator ketika menghitung late delivery rate.
 
 ---
 

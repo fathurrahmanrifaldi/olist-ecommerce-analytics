@@ -1,21 +1,3 @@
--- Mengubah tipe data pada beberapa kolom di tabel orders menjadi Timestamp
-ALTER TABLE orders
-    ALTER COLUMN order_purchase_timestamp
-        TYPE TIMESTAMP
-        USING NULLIF(TRIM(order_purchase_timestamp), '')::TIMESTAMP,
-    ALTER COLUMN order_approved_at
-        TYPE TIMESTAMP
-        USING NULLIF(TRIM(order_approved_at), '')::TIMESTAMP,
-    ALTER COLUMN order_delivered_carrier_date
-        TYPE TIMESTAMP
-        USING NULLIF(TRIM(order_delivered_carrier_date), '')::TIMESTAMP,
-    ALTER COLUMN order_delivered_customer_date
-        TYPE TIMESTAMP
-        USING NULLIF(TRIM(order_delivered_customer_date), '')::TIMESTAMP,
-    ALTER COLUMN order_estimated_delivery_date
-        TYPE TIMESTAMP
-        USING NULLIF(TRIM(order_estimated_delivery_date), '')::TIMESTAMP;
-
 -- Check duplicate order
 SELECT
     order_id,
