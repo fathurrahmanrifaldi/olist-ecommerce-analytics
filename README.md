@@ -205,7 +205,7 @@ Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing di
 
 ## 1. Executive Overview
 
-[Executive Overview](https://chatgpt.com/c/images/executive_overview.png)
+[Executive Overview](images/executive_overview.png)
 
 **Executive Overview** memberikan gambaran tingkat tinggi mengenai keseluruhan business performance.
 
@@ -231,7 +231,7 @@ Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing di
 
 ## 2. Customer Analytics
 
-[Customer Analytics](https://chatgpt.com/c/images/customer_analytics.png)
+[Customer Analytics](images/customer_analytics.png)
 
 Halaman **Customer Analytics** berfokus pada customer behavior dan revenue contribution.
 
@@ -257,7 +257,7 @@ Halaman **Customer Analytics** berfokus pada customer behavior dan revenue contr
 
 ## 3. Delivery & Satisfaction
 
-[Delivery & Satisfaction](https://chatgpt.com/c/images/delivery_satisfaction.png)
+[Delivery & Satisfaction](images/delivery_satisfaction.png)
 
 Halaman **Delivery & Satisfaction** menganalisis logistics performance dan customer experience.
 
