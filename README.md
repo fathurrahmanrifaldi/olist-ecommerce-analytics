@@ -4,26 +4,26 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 Proyek ini menganalisis **Brazilian E-Commerce Public Dataset by Olist**, yang mencakup sekitar **99K orders pada periode 2016–2018**.
 
 Tujuan proyek ini adalah mengubah data e-commerce mentah menjadi insight bisnis yang dapat ditindaklanjuti pada beberapa area utama:
 
-* 💰 Revenue dan order performance
-* 👥 Customer retention dan purchase frequency
-* 💎 Customer revenue concentration
-* 🛍️ Product category performance
-* 🏪 Seller performance
-* 🚚 Delivery performance
-* ⭐ Customer satisfaction
-* 📍 Geographic delivery performance
+* Revenue dan order performance
+* Customer retention dan purchase frequency
+* Customer revenue concentration
+* Product category performance
+* Seller performance
+* Delivery performance
+* Customer satisfaction
+* Geographic delivery performance
 
 Proyek ini mengikuti alur kerja **end-to-end data analytics**, dimulai dari data validation dan cleaning menggunakan PostgreSQL, dilanjutkan dengan business analysis berbasis SQL, kemudian pengembangan dashboard interaktif menggunakan Power BI.
 
 ---
 
-## 🎯 Pertanyaan Bisnis
+## Pertanyaan Bisnis
 
 Analisis ini dirancang untuk menjawab beberapa pertanyaan bisnis berikut:
 
@@ -38,7 +38,7 @@ Analisis ini dirancang untuk menjawab beberapa pertanyaan bisnis berikut:
 
 ---
 
-## 🗂️ Dataset
+## Dataset
 
 **Dataset:** Brazilian E-Commerce Public Dataset by Olist
 
@@ -90,7 +90,7 @@ Hal ini mencegah terjadinya duplikasi order selama proses analisis.
 
 ---
 
-## 🧹 Data Preparation & Validation
+## Data Preparation & Validation
 
 Data preparation dan validation dilakukan menggunakan **PostgreSQL**.
 
@@ -149,7 +149,7 @@ Sekitar **98.64% product revenue** dapat dipetakan ke translated categories.
 
 ---
 
-## 📊 Key Metrics
+## Key Metrics
 
 | Metric               |        Result |
 | -------------------- | ------------: |
@@ -190,7 +190,7 @@ R$137.74
 
 ---
 
-# 📈 Power BI Dashboard
+# Power BI Dashboard
 
 Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing dirancang berdasarkan perspektif bisnis tertentu.
 
@@ -269,7 +269,7 @@ Halaman **Delivery & Satisfaction** menganalisis logistics performance dan custo
 
 ---
 
-# 🔎 Key Findings
+# Key Findings
 
 ## 1. Revenue Mengalami Pertumbuhan yang Kuat Selama 2017
 
@@ -367,7 +367,7 @@ Perbedaannya adalah:
 
 Hal ini menunjukkan adanya **association antara delivery status dan customer review scores** pada data yang diamati.
 
-> ⚠️ **Important:** Analisis ini **tidak membuktikan hubungan kausalitas**. Hubungan yang diamati tidak membuktikan bahwa late delivery secara langsung menyebabkan review scores yang lebih rendah.
+>  **Important:** Analisis ini **tidak membuktikan hubungan kausalitas**. Hubungan yang diamati tidak membuktikan bahwa late delivery secara langsung menyebabkan review scores yang lebih rendah.
 
 ---
 
@@ -388,7 +388,7 @@ Baik **delivery rate maupun order volume** perlu dipertimbangkan ketika menginte
 
 ---
 
-# 💡 Potential Business Actions
+# Potential Business Actions
 
 Pola yang ditemukan menunjukkan beberapa area yang dapat dianalisis lebih lanjut.
 
@@ -436,7 +436,7 @@ Delivery KPIs dapat dikombinasikan dengan review metrics untuk memonitor potenti
 
 ---
 
-# ⚠️ Limitations
+# Limitations
 
 Beberapa keterbatasan perlu dipertimbangkan ketika menginterpretasikan hasil analisis.
 
@@ -487,7 +487,7 @@ Unknown / Untranslated
 
 ---
 
-# 🛠️ Tools & Technologies
+# Tools & Technologies
 
 | Technology       | Purpose                                              |
 | ---------------- | ---------------------------------------------------- |
@@ -499,7 +499,7 @@ Unknown / Untranslated
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 olist-ecommerce-business-analytics/
@@ -526,7 +526,7 @@ olist-ecommerce-business-analytics/
 
 ---
 
-# 🚀 Future Improvements
+# Future Improvements
 
 Pengembangan lebih lanjut yang dapat dilakukan pada proyek ini meliputi:
 
@@ -543,7 +543,7 @@ Pengembangan lebih lanjut yang dapat dilakukan pada proyek ini meliputi:
 
 ---
 
-# 👤 Author
+# Author
 
 **Fathur Rahman Rifaldi**
 
@@ -558,7 +558,7 @@ Interested in:
 
 ---
 
-## 📌 Disclaimer
+## Disclaimer
 
 Proyek ini dibuat untuk **educational dan portfolio purposes**.
 
