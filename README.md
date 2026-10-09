@@ -1,14 +1,19 @@
-# Olist E-Commerce Business Performance & Customer Analytics
+    # Olist E-Commerce Sales Performance Analysis
 
-> **Proyek Data Analytics End-to-End** yang menganalisis kinerja bisnis e-commerce, perilaku pelanggan, kategori produk, kinerja seller, operasional pengiriman, dan kepuasan pelanggan menggunakan **PostgreSQL, SQL, Power BI, dan DAX**.
+    > Analisis performa penjualan e-commerce menggunakan **PostgreSQL, SQL, Power BI, dan DAX** untuk memantau revenue, order performance, kategori produk, dan distribusi penjualan berdasarkan wilayah.
 
----
+    ---
+
 
 ## Project Overview
 
-Proyek ini menganalisis **Brazilian E-Commerce Public Dataset by Olist**, yang mencakup sekitar **99K orders pada periode 2016–2018**.
+    ## Project Overview
 
-Tujuan proyek ini adalah mengubah data e-commerce mentah menjadi insight bisnis yang dapat ditindaklanjuti pada beberapa area utama:
+
+    Proyek ini menggunakan **Brazilian E-Commerce Public Dataset by Olist**, yang mencakup sekitar **99 ribu orders pada periode 2016–2018**.
+
+    Fokus proyek adalah membuat analisis penjualan yang ringkas dan dashboard **Executive Overview** untuk menjawab pertanyaan bisnis dasar: bagaimana performa penjualan, bagaimana tren revenue berubah dari waktu ke waktu, dan kategori produk serta wilayah mana yang memberikan kontribusi revenue terbesar.
+
 
 * Revenue dan order performance
 * Customer retention dan purchase frequency
@@ -19,233 +24,254 @@ Tujuan proyek ini adalah mengubah data e-commerce mentah menjadi insight bisnis 
 * Customer satisfaction
 * Geographic delivery performance
 
-Proyek ini mengikuti alur kerja **end-to-end data analytics**, dimulai dari data validation dan cleaning menggunakan PostgreSQL, dilanjutkan dengan business analysis berbasis SQL, kemudian pengembangan dashboard interaktif menggunakan Power BI.
+    Alur kerja proyek mencakup data validation dan preparation menggunakan PostgreSQL, analisis bisnis menggunakan SQL, serta pembuatan dashboard menggunakan Power BI dan DAX.
 
----
+    ## Business Context
+
+    Bisnis e-commerce perlu memantau indikator penjualan secara konsisten untuk memahami perkembangan revenue, jumlah pesanan, dan kontribusi kategori produk. Data transaksi yang tersebar di beberapa tabel perlu diolah dan dirangkum agar dapat digunakan untuk mengevaluasi performa bisnis.
+
 
 ## Pertanyaan Bisnis
 
-Analisis ini dirancang untuk menjawab beberapa pertanyaan bisnis berikut:
+    Dalam proyek ini, saya berperan sebagai Data Analyst yang menggunakan data transaksi historis Olist untuk menyusun ringkasan performa penjualan dalam satu dashboard.
 
-1. Bagaimana perubahan revenue dan order performance dari waktu ke waktu?
-2. Kategori produk mana yang memberikan kontribusi terbesar terhadap revenue dan order volume?
-3. Seberapa signifikan keberadaan repeat customers?
-4. Seberapa terkonsentrasi revenue pada high-value customers?
-5. Seller mana yang memberikan kontribusi signifikan terhadap revenue dan order volume?
-6. Seberapa baik platform dalam hal delivery performance?
-7. Apakah delivery performance memiliki hubungan dengan customer review scores?
-8. Bagaimana delivery performance berbeda di berbagai negara bagian di Brazil?
 
----
+    ## Problem Statement
+
+    Data transaksi yang tersimpan dalam beberapa tabel tidak langsung memberikan gambaran performa penjualan secara menyeluruh. Diperlukan proses validasi, penggabungan, dan agregasi data untuk menghasilkan metrik yang konsisten serta visualisasi yang mudah dipahami.
+
+    ## Objectives
 
 ## Dataset
+    - Mengukur indikator utama penjualan: product revenue, orders, customers, dan Average Order Value (AOV).
+    - Memantau tren revenue bulanan.
+    - Mengidentifikasi kategori produk dengan kontribusi revenue dan volume order tertinggi.
+    - Membandingkan revenue berdasarkan state pelanggan.
+    - Menyajikan hasil analisis melalui dashboard Power BI yang ringkas dan interaktif.
 
-**Dataset:** Brazilian E-Commerce Public Dataset by Olist
 
-Dataset ini berisi informasi yang berkaitan dengan:
+    ## Business Questions
 
-* Customers
-* Orders
-* Order items
-* Products
-* Sellers
-* Payments
-* Reviews
-* Product category translations
+    1. Berapa total product revenue, jumlah orders, jumlah customers, dan Average Order Value?
+    2. Bagaimana tren revenue bulanan sepanjang periode data?
+    3. Kategori produk mana yang menghasilkan revenue tertinggi?
+    4. Apakah kategori dengan order volume tertinggi juga memiliki revenue tertinggi?
+    5. Bagaimana kontribusi revenue berbeda berdasarkan state pelanggan?
 
-Dataset mencakup sekitar **100K orders antara tahun 2016 dan 2018**.
+    ## Dataset
 
-### Main Tables
+    **Dataset:** [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
-| Table                               | Description                                  |
-| ----------------------------------- | -------------------------------------------- |
-| `customers`                         | Informasi customer dan lokasi                |
-| `orders`                            | Informasi order dan timestamps               |
-| `order_items`                       | Produk yang dibeli dalam setiap order        |
-| `products`                          | Informasi produk dan kategori                |
-| `sellers`                           | Informasi seller dan lokasi                  |
-| `order_payments`                    | Informasi pembayaran                         |
-| `order_reviews`                     | Customer review scores                       |
-| `product_category_name_translation` | Pemetaan kategori dari Portuguese ke English |
+    Dataset mencakup data customer, orders, order items, products, sellers, payments, reviews, serta pemetaan nama kategori produk dari bahasa Portugis ke bahasa Inggris.
 
-### Important Data Grain Consideration
+    ### Main Tables
 
-`orders` dan `order_items` memiliki hubungan **one-to-many**.
+    | Table | Purpose |
+    | --- | --- |
+    | `customers` | Informasi pelanggan dan lokasi |
+    | `orders` | Informasi pesanan dan timestamp |
+    | `order_items` | Produk, harga, freight, dan seller pada setiap pesanan |
+    | `products` | Informasi produk dan kategori |
+    | `product_category_name_translation` | Pemetaan kategori Portugis ke bahasa Inggris |
 
-Oleh karena itu, metrik pada tingkat order seperti:
+    Tabel lain pada dataset dapat digunakan bila dibutuhkan, tetapi analisis utama proyek ini berfokus pada metrik penjualan dan kategori produk.
 
-* Total Orders
-* Customer Orders
-* Delivery Status
+    ### Data Grain Consideration
 
-harus menggunakan **distinct order counting** ketika digabungkan dengan `order_items`.
+    Tabel `orders` dan `order_items` memiliki hubungan **one-to-many**: satu order dapat memiliki beberapa item. Karena itu, saat menghitung jumlah order setelah menggabungkan tabel, digunakan:
 
-Contoh:
+    ```sql
+    COUNT(DISTINCT order_id)
+    ```
 
-```sql
-COUNT(DISTINCT order_id)
-```
+    Pendekatan ini membantu mencegah penghitungan order yang sama lebih dari satu kali. Revenue produk dihitung pada grain item dari kolom `order_items.price`.
 
-Hal ini mencegah terjadinya duplikasi order selama proses analisis.
+    ## Data Preparation & Validation
 
----
+    Data preparation dan validation dilakukan menggunakan PostgreSQL.
+
+    ### Timestamp Handling
+
 
 ## Data Preparation & Validation
 
-Data preparation dan validation dilakukan menggunakan **PostgreSQL**.
+    Sebagian timestamp awalnya tersimpan sebagai text dan dapat mengandung empty string. Nilai kosong ditangani sebelum konversi ke timestamp, misalnya:
 
-### Timestamp Cleaning
+    ```sql
+    NULLIF(column_name, '')::TIMESTAMP
+    ```
 
-Beberapa timestamp fields pada awalnya disimpan sebagai text values dan mengandung empty strings.
+    Nilai yang tidak tersedia dipertahankan sebagai `NULL` jika memang tidak ada tanggal yang tercatat.
 
-Empty strings ditangani menggunakan:
+    ### Category Mapping
 
-```sql
-NULLIF(column_name, '')::TIMESTAMP
-```
+    Nama kategori bahasa Inggris berada di tabel `product_category_name_translation`, bukan langsung di tabel `products`. Penggabungan kategori dilakukan menggunakan `product_category_name`.
 
-Pendekatan ini mempertahankan missing values sebagai `NULL`, yang penting untuk order yang belum selesai dikirim.
+    ```sql
+    SELECT
+        p.product_id,
+        pct.product_category_name_english
+    FROM products p
+    LEFT JOIN product_category_name_translation pct
+        ON NULLIF(TRIM(p.product_category_name), '') =
+        pct.product_category_name;
+    ```
 
-### Delivery Status
+    Validasi menunjukkan tidak ada duplicate key pada translation table. Sebagian kecil revenue produk tidak dapat dipetakan ke kategori bahasa Inggris; kategori yang tidak terpetakan sebaiknya tetap dipertahankan sebagai `Unknown / Untranslated`, bukan dibuang dari perhitungan revenue total.
 
-Order diklasifikasikan ke dalam tiga delivery statuses:
+    ## Key Metrics
 
-| Status          | Definition                                          |
-| --------------- | --------------------------------------------------- |
-| `On Time`       | Delivered pada atau sebelum estimated delivery date |
-| `Late`          | Delivered setelah estimated delivery date           |
+    | Metric | Result / Definition |
+    | --- | ---: |
+    | Unique Customers | **96,096** |
+    | Total Orders | **99,441** |
+    | Orders with Items | **98,666** |
+    | Product Revenue | **Approximately R$13.60M** |
+    | Average Order Value | **R$137.74** |
 
-Sebuah order dianggap `Late` ketika:
+    ### Metric Definitions
 
-```text
-Delivered Date > Estimated Delivery Date
-```
+    **Product Revenue**
 
-### Category Validation
+    Dihitung menggunakan `SUM(order_items.price)`. Nilai `freight_value` tidak termasuk dalam definisi revenue proyek ini.
 
-English product category tidak disimpan secara langsung di dalam tabel `products`.
+    **Total Orders**
 
-Category mapping mengikuti alur:
+    Jumlah order unik menggunakan `COUNT(DISTINCT orders.order_id)`.
 
-```text
-products.product_category_name
-            ↓
-product_category_name_translation.product_category_name
-            ↓
-product_category_name_english
-```
+    **Total Customers**
 
-Translation table juga diperiksa untuk memastikan tidak terdapat duplicate category keys.
+    Jumlah pelanggan unik menggunakan `customer_unique_id`, bukan sekadar menghitung baris pada tabel customers.
 
-**Hasil:** Tidak ditemukan duplicate translation keys.
+    **Average Order Value (AOV)**
 
-Beberapa produk memiliki category yang kosong, missing, atau tidak memiliki English translation. Record tersebut diklasifikasikan sebagai:
+    AOV dihitung sebagai product revenue dibagi jumlah order yang memiliki item:
 
-```text
-Unknown / Untranslated
-```
+    ```text
+    AOV = Product Revenue / Orders with Items
+    ```
 
-Sekitar **98.64% product revenue** dapat dipetakan ke translated categories.
+    Hasil dashboard: **R$137.74**.
 
----
+    > Catatan: definisi AOV pada proyek ini menggunakan product revenue dan orders with items. Definisi tersebut perlu dipertahankan secara konsisten saat membandingkan angka antara SQL dan Power BI.
+
+    ## Power BI Dashboard — Executive Overview
+
 
 ## Key Metrics
+    ![Executive Overview](images/executive_overview.png)
 
-| Metric               |        Result |
-| -------------------- | ------------: |
-| Unique Customers     |    **96,096** |
-| Total Orders         |    **99,441** |
-| Orders with Items    |    **98,666** |
-| Product Revenue      | **~R$13.60M** |
-| Average Order Value  |  **R$137.74** |
-| Repeat Customer Rate |     **3.12%** |
-| Late Delivery Rate   |     **8.11%** |
-| Average Review Score |     **~4.09** |
 
-### Revenue Definition
+    Dashboard satu halaman ini memberikan ringkasan performa penjualan e-commerce.
 
-Product revenue dihitung menggunakan:
+    ### KPI Cards
 
-```text
-order_items.price
-```
+    - **Total Revenue** — total product revenue berdasarkan `order_items.price`.
+    - **Total Orders** — jumlah order unik.
+    - **Total Customers** — jumlah customer unik.
+    - **Average Order Value** — product revenue dibagi orders with items.
 
-`freight_value` tidak termasuk dalam revenue metric.
+    ### Visualizations
 
-### Average Order Value (AOV)
+    - **Monthly Revenue Trend** — memantau perubahan revenue per bulan.
+    - **Revenue by Product Category** — membandingkan kontribusi revenue antar kategori.
+    - **Revenue by State** — membandingkan revenue berdasarkan state pelanggan.
 
-AOV dihitung menggunakan formula:
+    ### Dashboard Objective
 
-```text
-Product Revenue
-────────────────────
-Orders with Items
-```
+    > Bagaimana performa penjualan secara keseluruhan, bagaimana trennya berubah dari waktu ke waktu, dan kategori serta wilayah mana yang memberikan kontribusi revenue terbesar?
 
-Hasil:
+    ## Key Findings
 
-```text
-R$137.74
-```
+    ### 1. Revenue Mencapai Puncak pada November 2017
 
----
+    November 2017 mencatat sekitar **R$1.01 juta** product revenue, dengan **7,451 orders** dan pertumbuhan revenue sekitar **52.10% dibandingkan Oktober 2017**.
+
+    **Business implication:** Periode dengan kenaikan revenue yang signifikan layak ditelusuri lebih lanjut dengan melihat perubahan order volume dan kontribusi kategori produk. Data ini sendiri belum menjelaskan penyebab kenaikan.
 
 # Power BI Dashboard
+    ### 2. Kategori dengan Revenue Tertinggi Tidak Selalu Memiliki Order Terbanyak
 
-Power BI dashboard terdiri dari **tiga analytical pages**, yang masing-masing dirancang berdasarkan perspektif bisnis tertentu.
+    Contoh kategori dengan kontribusi revenue tinggi:
 
----
+    | Product Category | Orders | Approx. Revenue |
+    | --- | ---: | ---: |
+    | `health_beauty` | 8,836 | R$1.259M |
+    | `watches_gifts` | 5,624 | R$1.205M |
+    | `bed_bath_table` | 9,417 | R$1.037M |
+    | `sports_leisure` | 7,720 | R$988K |
+    | `computers_accessories` | 6,689 | R$912K |
 
-## 1. Executive Overview
+    `health_beauty` mencatat revenue tertinggi di antara kategori yang ditampilkan, sedangkan `bed_bath_table` memiliki jumlah order tertinggi di antara kategori tersebut.
 
-![Executive Overview](images/executive_overview.png)
+    **Business implication:** Kategori produk sebaiknya dievaluasi berdasarkan revenue dan order volume secara bersamaan. Revenue tinggi tidak otomatis berarti profitabilitas tinggi karena dataset ini tidak menyediakan data biaya yang memadai.
 
-**Executive Overview** memberikan gambaran tingkat tinggi mengenai keseluruhan business performance.
+    ### 3. Dashboard Mendukung Pemantauan Penjualan dari Beberapa Perspektif
 
-### KPIs
+    KPI cards memberikan ringkasan performa, sementara tren bulanan, kategori produk, dan state membantu pengguna menelusuri perubahan serta perbedaan kontribusi penjualan.
 
-* Total Revenue
-* Total Orders
-* Total Customers
-* Average Order Value
+    **Business implication:** Dashboard dapat digunakan sebagai titik awal untuk memonitor performa dan mengidentifikasi area yang membutuhkan analisis lebih lanjut.
 
-### Visualizations
+    ## Recommendations
 
-* Monthly Revenue Trend
-* Revenue by Product Category
-* Revenue by State
+    Berdasarkan analisis deskriptif ini, beberapa tindak lanjut yang dapat dipertimbangkan adalah:
 
-### Business Question
+    1. **Investigasi tren revenue:** telusuri periode dengan kenaikan atau penurunan signifikan menggunakan order volume dan kategori produk.
+    2. **Evaluasi kategori produk:** bandingkan revenue dan jumlah order untuk memahami perbedaan kontribusi antar kategori.
+    3. **Pantau kontribusi wilayah:** gunakan revenue by state untuk mengidentifikasi perbedaan pola penjualan geografis.
+    4. **Kembangkan analisis lanjutan bila diperlukan:** misalnya analisis customer atau delivery dapat menjadi proyek terpisah jika ada kebutuhan bisnis dan ruang lingkup yang jelas.
 
-> **Bagaimana performa bisnis secara keseluruhan?**
+    Rekomendasi di atas merupakan area untuk investigasi lebih lanjut, bukan klaim bahwa suatu tindakan pasti meningkatkan revenue.
 
----
+    ## Tools & Technologies
 
-## 2. Customer Analytics
+    | Technology | Purpose |
+    | --- | --- |
+    | **PostgreSQL** | Penyimpanan, validasi, dan persiapan data |
+    | **SQL** | Penggabungan tabel, agregasi, dan analisis bisnis |
+    | **Power BI** | Dashboard dan visualisasi interaktif |
+    | **DAX** | Perhitungan KPI dan measures |
+    | **Git & GitHub** | Version control dan dokumentasi proyek |
 
-![Customer Analytics](images/customer_analytics.png)
+    ## Project Structure
 
-Halaman **Customer Analytics** berfokus pada customer behavior dan revenue contribution.
+    Sesuaikan struktur di bawah ini dengan file yang benar-benar diunggah ke repository.
 
-### KPIs
+    ```text
+    olist-ecommerce-sales-performance/
+    ├── README.md
+    ├── sql/
+    │   ├── 01_data_validation.sql
+    │   ├── 02_data_cleaning.sql
+    │   └── 03_sales_analysis.sql
+    ├── powerbi/
+    │   └── Olist_Sales_Performance.pbix
+    ├── images/
+    │   └── executive_overview.png
+    └── data/
+        └── README.md
+    ```
 
-* Total Customers
-* Repeat Customers
-* One Time Customer
+    Jangan mengunggah dataset mentah berukuran besar jika tidak diperlukan. Cukup sertakan tautan sumber dataset dan petunjuk untuk mendapatkannya.
 
-### Visualizations
+    ## Limitations
 
-* One-Time vs Repeat Customers
-* Customer Order Frequency
-* Revenue by Customer Type
+    - **Historical data:** dataset mencakup sekitar 2016–2018 dan tidak merepresentasikan kondisi e-commerce saat ini.
+    - **Revenue definition:** revenue hanya menggunakan `order_items.price` dan tidak mencakup `freight_value`.
+    - **No cost data:** analisis ini tidak dapat menentukan profit atau profit margin.
+    - **Category mapping:** sebagian kecil revenue tidak memiliki kategori bahasa Inggris yang dapat dipetakan.
+    - **Descriptive analysis:** hasil menunjukkan pola pada data historis dan tidak membuktikan penyebab dari perubahan revenue.
 
-### Business Question
+    ## Author
 
-> **Siapa customer perusahaan dan bagaimana pola pembelian mereka?**
+    **Fathur Rahman Rifaldi**  
+    Information Systems Student | Aspiring Data Analyst
 
----
+    - [LinkedIn](https://linkedin.com/in/fathurrahmanrifaldi/)
+    - [GitHub](https://github.com/fathurrahmanrifaldi)
+    - [Portfolio](https://fathurrahmanrifaldi.vercel.app)
 
-## 3. Delivery & Satisfaction
+    ## Disclaimer
 
 ![Delivery & Satisfaction](images/delivery_satisfaction.png)
 
@@ -559,7 +585,4 @@ Interested in:
 ---
 
 ## Disclaimer
-
-Proyek ini dibuat untuk **educational dan portfolio purposes**.
-
-Business recommendations yang disampaikan merupakan potential areas untuk investigasi lebih lanjut berdasarkan dataset yang tersedia dan tidak boleh diinterpretasikan sebagai confirmed causal conclusions.
+    Proyek ini dibuat untuk tujuan pembelajaran dan portofolio. Insight dan rekomendasi merupakan interpretasi deskriptif dari dataset publik historis, bukan klaim tentang hasil operasional aktual atau hubungan sebab-akibat.
